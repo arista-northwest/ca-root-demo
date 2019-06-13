@@ -52,7 +52,6 @@ openssl verify -CAfile certs/ca.cert.pem \
 ### copy server cert to switch
 ```
 scp certs/ca.cert.pem \
-    crl/ca.crl.pem \
     certs/veos4.lab.lan.cert.pem \
     private/veos4.lab.lan.key.pem \
     admin@veos4.lab.lan:/home/admin
