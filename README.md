@@ -3,11 +3,11 @@
 ### reset...
 
 ```
-rm certs/* crl/* private/* csr/* newcerts/*
+rm -f certs/* crl/* private/* csr/* newcerts/*
 cat /dev/null > index.txt
 echo 1000 > serial
-rm serial.old
-rm index.*.old
+rm -f serial.old
+rm -f index.*.old
 ```
 
 ### Generate root pair
@@ -22,51 +22,53 @@ openssl req -config openssl.cnf \
 ```
 
 ### verify
+
 ```   
 openssl x509 -noout -text -in certs/ca.cert.pem
 ```
 
 ### generate and sign server cert
+
 ```
-openssl genrsa -out private/veos4.lab.lan.key.pem 2048
+openssl genrsa -out private/veos3.lab.lan.key.pem 2048
 
 openssl req -config openssl.cnf \
-    -key private/veos4.lab.lan.key.pem \
-    -out csr/veos4.lab.lan.csr.pem \
-    -subj '/CN=veos4.lab.lan' \
+    -key private/veos3.lab.lan.key.pem \
+    -out csr/veos3.lab.lan.csr.pem \
+    -subj '/CN=veos3.lab.lan' \
     -new -sha256
 
 openssl ca -config openssl.cnf \
-    -in csr/veos4.lab.lan.csr.pem \
-    -out certs/veos4.lab.lan.cert.pem \
+    -in csr/veos3.lab.lan.csr.pem \
+    -out certs/veos3.lab.lan.cert.pem \
     -extensions server_cert -days 375 -notext -md sha256
 ```
 
 ### verify
 ```
-openssl x509 -noout -text -in certs/veos4.lab.lan.cert.pem
+openssl x509 -noout -text -in certs/veos3.lab.lan.cert.pem
 openssl verify -CAfile certs/ca.cert.pem \
-    certs/veos4.lab.lan.cert.pem
+    certs/veos3.lab.lan.cert.pem
 ```
 
 ### copy server cert to switch
 ```
 scp certs/ca.cert.pem \
-    certs/veos4.lab.lan.cert.pem \
-    private/veos4.lab.lan.key.pem \
-    admin@veos4.lab.lan:/home/admin
+    certs/veos3.lab.lan.cert.pem \
+    private/veos3.lab.lan.key.pem \
+    admin@veos3.lab.lan:/home/admin
 ```
 
 ### on switch
 ```
 copy file:/home/admin/ca.cert.pem certificate:
-copy file:/home/admin/veos4.lab.lan.cert.pem certificate:
-copy file:/home/admin/veos4.lab.lan.key.pem sslkey:
+copy file:/home/admin/veos3.lab.lan.cert.pem certificate:
+copy file:/home/admin/veos3.lab.lan.key.pem sslkey:
 
 configure
 management security
   ssl profile EAPI
-      certificate veos4.lab.lan.cert.pem key veos4.lab.lan.key.pem
+      certificate veos3.lab.lan.cert.pem key veos3.lab.lan.key.pem
       trust certificate ca.cert.pem
 
 show management security ssl profile
@@ -79,7 +81,12 @@ management api http-commands
 
 ### from CA root...
 ```
-curl -X POST -d "show hostname" -u admin: --cacert certs/ca.cert.pem https://veos4.lab.lan/command-api
+curl -X POST -d "show hostname" -u admin: --cacert certs/ca.cert.pem https://veos3.lab.lan/command-api
+```
+
+__Outputs:__
+
+```
 {"jsonrpc": "2.0", "id": null, "result": [{"fqdn": "veos-04.lab.lan", "hostname": "veos-04"}]}
 ```
 
@@ -111,7 +118,7 @@ openssl ca -config openssl.cnf   -gencrl -out crl/ca.crl.pem
 ### deploy
 
 ```
-scp crl/ca.crl.pem admin@veos4:/home/admin
+scp crl/ca.crl.pem admin@veos3:/home/admin
 ```
 
 ### on switch
@@ -131,5 +138,5 @@ curl -X POST -d "show hostname" \
     --cacert certs/ca.cert.pem \
     --cert certs/ops@lab.lan.cert.pem \
     --key private/ops@lab.lan.key.pem \
-    https://veos4.lab.lan/command-api
+    https://veos3.lab.lan/command-api
 ```
