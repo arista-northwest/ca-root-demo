@@ -8,6 +8,9 @@ dir               = ./ca
 # `man ca`
 default_ca = root_ca
 
+[ CA_default ]
+copy_extensions = copy
+
 [ root_ca ]
 # Directory and file locations.
 certs             = $dir/certs
@@ -121,6 +124,9 @@ subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid,issuer:always
 keyUsage = critical, digitalSignature, keyEncipherment
 extendedKeyUsage = serverAuth
+{%- if san %}
+subjectAltName      = @alternate_names
+{%- endif %}
 
 [ crl_ext ]
 # Extension for CRLs (`man x509v3_config`).
@@ -133,3 +139,8 @@ subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid,issuer
 keyUsage = critical, digitalSignature
 extendedKeyUsage = critical, OCSPSigning
+
+{% if san -%}
+[ alternate_names ]
+DNS = {{ san }}
+{% endif -%}
