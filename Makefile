@@ -20,14 +20,13 @@ distclean:
 clean:
 	rm -Rf ca
 
-root:
+root: check-cn
 	mkdir -p $(CA_ROOT_DIR)/certs $(CA_ROOT_DIR)/crl $(CA_ROOT_DIR)/private $(CA_ROOT_DIR)/csr $(CA_ROOT_DIR)/newcerts
 	
 	cp openssl.ca.cnf $(CA_ROOT_DIR)/openssl.cnf
 	
 	cat /dev/null > $(CA_ROOT_DIR)/index.txt
 	echo 1000 > $(CA_ROOT_DIR)/serial
-#	echo 1000 > $(CA_ROOT_DIR)/crlnumber
 
 	openssl genrsa -out $(CA_ROOT_DIR)/private/ca.key.pem 4096
 
@@ -40,7 +39,7 @@ root:
 verify:
 	openssl x509 -noout -text -in $(CA_ROOT_DIR)/certs/ca.cert.pem
 
-intermediate:
+intermediate: check-cn
 	mkdir -p $(CA_INTERMEDIATE_DIR)/certs $(CA_INTERMEDIATE_DIR)/crl $(CA_INTERMEDIATE_DIR)/private $(CA_INTERMEDIATE_DIR)/csr $(CA_INTERMEDIATE_DIR)/newcerts
 	jinja2 -D dir=$(CA_INTERMEDIATE_DIR) -o $(CA_INTERMEDIATE_DIR)/openssl.cnf openssl.intermediate.cnf
 	cat /dev/null > $(CA_INTERMEDIATE_DIR)/index.txt
@@ -94,12 +93,5 @@ client: check-cn
 		-in $(CA_INTERMEDIATE_DIR)/csr/$(CN).csr.pem \
 		-out $(CA_INTERMEDIATE_DIR)/certs/$(CN).cert.pem
 
-crl: prep _crl tidy
-_crl:
-	openssl ca -config $(OPENSSL_CONF) -gencrl -out $(CA_INTERMEDIATE_DIR)/crl/ca.crl.pem
-
-# deploy:
-# 	scp certs/ca.cert.pem \
-# 		certs/veos3.lab.lan.cert.pem \
-# 		private/veos3.lab.lan.key.pem \
-# 		admin@veos3.lab.lan:/home/admin
+crl:
+	openssl ca -config $(CA_INTERMEDIATE_DIR)/openssl.cnf -gencrl -out $(CA_INTERMEDIATE_DIR)/crl/ca.crl.pem
