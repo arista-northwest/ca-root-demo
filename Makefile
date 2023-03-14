@@ -6,10 +6,7 @@ ST ?= Washington
 L ?= Seattle
 O ?= Lab
 
-#OPENSSL_CONF ?= openssl.cnf
-#OPENSSL_TPL  ?= openssl.cnf.j2
 DAYS         ?= 375 
-CLIENTID     = 
 
 check-cn:
 
@@ -22,9 +19,6 @@ distclean:
 
 clean:
 	rm -Rf ca
-
-# tidy:
-# 	rm $(OPENSSL_CONF)
 
 root:
 	mkdir -p $(CA_ROOT_DIR)/certs $(CA_ROOT_DIR)/crl $(CA_ROOT_DIR)/private $(CA_ROOT_DIR)/csr $(CA_ROOT_DIR)/newcerts
@@ -48,11 +42,10 @@ verify:
 
 intermediate:
 	mkdir -p $(CA_INTERMEDIATE_DIR)/certs $(CA_INTERMEDIATE_DIR)/crl $(CA_INTERMEDIATE_DIR)/private $(CA_INTERMEDIATE_DIR)/csr $(CA_INTERMEDIATE_DIR)/newcerts
-#	cp openssl.intermediate.cnf $(CA_INTERMEDIATE_DIR)/openssl.cnf
 	jinja2 -D dir=$(CA_INTERMEDIATE_DIR) -o $(CA_INTERMEDIATE_DIR)/openssl.cnf openssl.intermediate.cnf
 	cat /dev/null > $(CA_INTERMEDIATE_DIR)/index.txt
 	echo 1000 > $(CA_INTERMEDIATE_DIR)/serial
-#	echo 1000 > $(CA_INTERMEDIATE_DIR)/crlnumber
+	echo 1000 > $(CA_INTERMEDIATE_DIR)/crlnumber
 	
 	openssl genrsa -out $(CA_INTERMEDIATE_DIR)/private/intermediate.key.pem 4096
 
