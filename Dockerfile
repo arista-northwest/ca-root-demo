@@ -9,9 +9,8 @@ RUN apk add --update --no-cache python3 && \
     pip3 install --no-cache --upgrade pip setuptools && \
     pip3 install jinja2-cli
 
+VOLUME [ "/root" ]
 
-VOLUME [ "/root_demo" ]
-
-WORKDIR /root_demo
+WORKDIR /root
 
 CMD /bin/bash
