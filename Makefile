@@ -48,12 +48,12 @@ intermediate: check-cn
 	
 	openssl genrsa -out $(CA_INTERMEDIATE_DIR)/private/intermediate.key.pem 4096
 
-	openssl req -config $(CA_INTERMEDIATE_DIR)/openssl.cnf -new -sha256 \
+	openssl req -batch -config $(CA_INTERMEDIATE_DIR)/openssl.cnf -new -sha256 \
 		-key $(CA_INTERMEDIATE_DIR)/private/intermediate.key.pem \
 		-out $(CA_INTERMEDIATE_DIR)/csr/intermediate.csr.pem \
 		-subj '/CN=$(CN)/ST=$(ST)/L=$(L)/O=$(O)/OU=Seattle Lab Certificate Authority/C=$(C)'
 
-	openssl ca -config $(CA_ROOT_DIR)/openssl.cnf \
+	openssl ca -batch -config $(CA_ROOT_DIR)/openssl.cnf \
 		-extensions v3_intermediate_ca \
 		-days 3650 -notext -md sha256 \
 		-in $(CA_INTERMEDIATE_DIR)/csr/intermediate.csr.pem \
