@@ -1,6 +1,6 @@
 
-# Created by https://www.gitignore.io/api/linux,macos,windows
-# Edit at https://www.gitignore.io/?templates=linux,macos,windows
+# Created by https://www.toptal.com/developers/gitignore/api/linux,windows,macos
+# Edit at https://www.toptal.com/developers/gitignore?templates=linux,windows,macos
 
 ### Linux ###
 *~
@@ -26,6 +26,7 @@
 # Icon must end with two \r
 Icon
 
+
 # Thumbnails
 ._*
 
@@ -45,9 +46,14 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+### macOS Patch ###
+# iCloud generated files
+*.icloud
+
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db
+Thumbs.db:encryptable
 ehthumbs.db
 ehthumbs_vista.db
 
@@ -70,8 +76,9 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.gitignore.io/api/linux,macos,windows
+# End of https://www.toptal.com/developers/gitignore/api/linux,windows,macos
 
+.*
 *.old
 ca/
 _*
