@@ -1,4 +1,4 @@
-CA_ROOT_DIR    ?= /root/ca
+CA_ROOT_DIR    ?= ca
 CA_INTERMEDIATE_DIR ?= $(CA_ROOT_DIR)/intermediate
 CN =
 C ?= US

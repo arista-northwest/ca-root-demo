@@ -7,7 +7,7 @@ default_ca = CA_default
 
 [ CA_default ]
 # Directory and file locations.
-dir               = /root/ca
+dir               = ca
 certs             = $dir/certs
 crl_dir           = $dir/crl
 new_certs_dir     = $dir/newcerts
@@ -33,6 +33,8 @@ cert_opt          = ca_default
 default_days      = 375
 preserve          = no
 policy            = policy_strict
+
+copy_extenions    = copy
 
 [ policy_strict ]
 # The root CA should only sign intermediate certificates that match.

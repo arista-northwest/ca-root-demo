@@ -1,0 +1,52 @@
+name: ca
+
+topology:
+  defaults:
+    startup-config: configs/ceos-startup.cfg
+    kind: ceos
+  kinds:
+    ceos:
+      image: ceos:4.33.1.1F-DPE
+      env:
+        CLAB_MGMT_VRF: MGMT
+      extras:
+        ceos-copy-to-flash:
+          - ca/brighton/certs/ca-chain.cert.pem
+    linux:
+      image: ubuntu:latest
+      binds:
+        - .:/root
+      exec:
+        - sh ./root/configs/target-config.sh
+      # entrypoint: sh ./root/configs/entry.sh
+      
+
+  nodes:
+    ca:
+      kind: linux
+    # cloud:
+    spine1:
+    # spine2:
+    tor1:
+      image: ceos:4.33.1F-DPE
+      extras:
+        ceos-copy-to-flash:
+          - ca/brighton/certs/clab-ca-tor1.cert.pem
+          - ca/brighton/private/clab-ca-tor1.key.pem
+    tor2:
+      image: ceos:4.31.3M-DPE
+      #image: ceos:4.29.9.1M-DPE
+      # image: ceos:4.33.1F-DPE
+      extras:
+        ceos-copy-to-flash:
+          - ca/brighton/certs/clab-ca-tor2.cert.pem
+          - ca/brighton/private/clab-ca-tor2.key.pem
+
+  links:
+    # - endpoints: ["gaston:eth1", "cloud:eth1"]
+    # - endpoints: ["spine1:eth1", "cloud:eth2"]
+    # - endpoints: ["spine2:eth1", "cloud:eth3"]
+     - endpoints: ["tor1:eth1", "spine1:eth3"]
+    # - endpoints: ["tor1:eth2", "spine2:eth3"]
+     - endpoints: ["tor2:eth1", "spine1:eth4"]
+    # - endpoints: ["tor2:eth2", "spine2:eth4"]
